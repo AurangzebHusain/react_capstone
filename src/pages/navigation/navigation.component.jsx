@@ -14,6 +14,9 @@ const Navigation = () => {
           <Link to="/" className="nav-item">
             Home
           </Link>
+          <Link to="/signin" className="nav-item">
+            Sign in
+          </Link>
           <Link to="/shop" className="nav-item">
             Shop
           </Link>
@@ -23,6 +26,18 @@ const Navigation = () => {
         </div>
       </div>
       <Outlet />
+      <div className="footer">
+        <div className="logo">
+          <CrownLogo></CrownLogo>
+        </div>
+        <div className="footer-items">
+          <div className="footer-item">Item 1</div>
+          <div className="footer-item">Item 2</div>
+          <div className="footer-item">Item 3</div>
+          <div className="footer-item">Item 4</div>
+          <div className="footer-item">Item 5</div>
+        </div>
+      </div>
     </>
   );
 };

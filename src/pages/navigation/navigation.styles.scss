@@ -1,5 +1,5 @@
 .navigation-container{
-    padding: 2rem 1rem ;
+    padding: 1rem 1rem ;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -16,5 +16,21 @@ a{
     &:hover{
         text-decoration: none;
         color: black;
+    }
+}
+
+.footer{
+    width: 100vw;
+    bottom: 0;
+    position: fixed;
+    padding: 1rem 1rem ;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    .footer-items{
+        display: flex;
+        flex-direction: row;
+        gap: 20px;
     }
 }
