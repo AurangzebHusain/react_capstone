@@ -4,8 +4,10 @@ import {
   getAuth,
   GoogleAuthProvider,
   signInWithRedirect,
+  createUserWithEmailAndPassword,
   //   signInWithGooglePopup,
   signInWithPopup,
+  signInWithEmailAndPassword,
 } from "firebase/auth";
 
 import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
@@ -32,21 +34,64 @@ provider.setCustomParameters({ prompt: "select_account" });
 
 export const auth = getAuth();
 export const signInWithGooglePopup = () => signInWithPopup(auth, provider);
+export const signInWithGoogleRedirect = () =>
+  signInWithRedirect(auth, provider);
+
 // const analytics = getAnalytics(app);
 
 export const db = getFirestore();
 
-export const createUserDocumentFromAuth = async (userAuth) => {
+export const createUserDocumentFromAuth = async (
+  userAuth,
+  additionalInformation = {}
+) => {
   const userDocRef = doc(db, "users", userAuth.uid);
   const userSnapShot = getDoc(userDocRef);
   if (!(await userSnapShot).exists()) {
     const { displayName, email } = userAuth;
     const createdAt = new Date();
     try {
-      await setDoc(userDocRef, { displayName, email, createdAt });
+      await setDoc(userDocRef, {
+        displayName,
+        email,
+        createdAt,
+        ...additionalInformation,
+      });
     } catch (e) {
       console.log("Error creating the user", e.message);
     }
   }
   return userDocRef;
 };
+
+export const createUserDocumentFromForm = async (form) => {
+  //   const userDocRef = doc(db, "users", form.email);
+  //   const userSnapShot = getDoc(userDocRef);
+  const { displayName, email, password, confirm_password } = form;
+  if (!email || !password) return;
+
+  // const createdAt = new Date();
+  try {
+    const { user } = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
+    await createUserDocumentFromAuth(user, { displayName });
+  } catch (e) {
+    console.log("Error creating the user", e.message);
+  }
+};
+export const signInAuthWithEmailAndPassword = async (form) => {
+  const { email, password } = form;
+  if (!email || !password) return;
+
+  try {
+    return await signInWithEmailAndPassword(auth, email, password);
+  } catch (e) {
+    console.log("Error creating the user", e.message);
+    throw e;
+  }
+};
+//   return userDocRef;
