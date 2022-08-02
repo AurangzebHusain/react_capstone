@@ -8,6 +8,8 @@ import {
   //   signInWithGooglePopup,
   signInWithPopup,
   signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
 } from "firebase/auth";
 
 import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
@@ -64,25 +66,6 @@ export const createUserDocumentFromAuth = async (
   return userDocRef;
 };
 
-export const createUserDocumentFromForm = async (form) => {
-  //   const userDocRef = doc(db, "users", form.email);
-  //   const userSnapShot = getDoc(userDocRef);
-  const { displayName, email, password, confirm_password } = form;
-  if (!email || !password) return;
-
-  // const createdAt = new Date();
-  try {
-    const { user } = await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-
-    await createUserDocumentFromAuth(user, { displayName });
-  } catch (e) {
-    console.log("Error creating the user", e.message);
-  }
-};
 export const signInAuthWithEmailAndPassword = async (form) => {
   const { email, password } = form;
   if (!email || !password) return;
@@ -94,4 +77,12 @@ export const signInAuthWithEmailAndPassword = async (form) => {
     throw e;
   }
 };
+
+export const signOutUser = async () => {
+  await signOut(auth);
+};
 //   return userDocRef;
+
+export const onAuthStateChangedListener = (callback) =>
+  // if(!callback) return "Error";
+  onAuthStateChanged(auth, callback);

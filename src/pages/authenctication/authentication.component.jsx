@@ -1,39 +1,26 @@
 import { useEffect } from "react";
-import { getRedirectResult } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  getRedirectResult,
+} from "firebase/auth";
 import React from "react";
 import {
   auth,
   signInWithGooglePopup,
   createUserDocumentFromAuth,
-  createUserDocumentFromForm,
   signInWithGoogleRedirect,
   signInAuthWithEmailAndPassword,
 } from "../../utils/firebase/firebase.utils";
+
 import { useFormik } from "formik";
 import "./authentication.styles.scss";
 
 const AuthenticationPage = () => {
-  const logGoogleUser = async () => {
-    const response = await signInWithGooglePopup();
-    // console.log(response);
-    // await createUserDocumentFromAuth(response.user);
-  };
-
-  //   const afterRedirectResult = async () => {
-  //     const response = await getRedirectResult(auth);
-  //     console.log(response);
-  //     await createUserDocumentFromAuth(response.user);
-  //   };
-
-  //   useEffect(() => {
-  //     afterRedirectResult();
-  //   }, []);
   return (
     <>
       <div className="form-container">
         <div className="sign-up-form">
           <SigninForm
-            logGoogleUser={logGoogleUser}
             signInAuthWithEmailAndPassword={signInAuthWithEmailAndPassword}
             // afterRedirectResult={afterRedirectResult}
           ></SigninForm>
@@ -48,6 +35,29 @@ const AuthenticationPage = () => {
 const SignupForm = () => {
   // Pass the useFormik() hook initial form values and a submit function that will
   // be called when the form is submitted
+  const createUserDocumentFromForm = async (form) => {
+    //   const userDocRef = doc(db, "users", form.email);
+    //   const userSnapShot = getDoc(userDocRef);
+    const { displayName, email, password, confirm_password } = form;
+    if (!email || !password) return;
+
+    // const createdAt = new Date();
+    try {
+      const { user } = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      console.log(user);
+
+      await createUserDocumentFromAuth(user, {
+        displayName,
+      });
+    } catch (e) {
+      console.log("Error creating the user", e.message);
+      throw e;
+    }
+  };
   const [values, setValues] = React.useState({});
 
   const handleChange = (event) => {
@@ -68,7 +78,11 @@ const SignupForm = () => {
     },
     onSubmit: async (values) => {
       console.log(values);
-      await createUserDocumentFromForm(values);
+      try {
+        await createUserDocumentFromForm(values);
+      } catch (e) {
+        alert(e.code);
+      }
     },
   });
   return (
@@ -121,11 +135,23 @@ const SignupForm = () => {
   );
 };
 
-const SigninForm = ({
-  logGoogleUser,
-  afterRedirectResult,
-  signInAuthWithEmailAndPassword,
-}) => {
+const SigninForm = ({ signInAuthWithEmailAndPassword }) => {
+  const logGoogleUser = async () => {
+    const response = await signInWithGooglePopup();
+
+    // console.log(response);
+    // await createUserDocumentFromAuth(response.user);
+  };
+
+  //   const afterRedirectResult = async () => {
+  //     const response = await getRedirectResult(auth);
+  //     console.log(response);
+  //     await createUserDocumentFromAuth(response.user);
+  //   };
+
+  //   useEffect(() => {
+  //     afterRedirectResult();
+  //   }, []);
   // Pass the useFormik() hook initial form values and a submit function that will
   // be called when the form is submitted
   const [values, setValues] = React.useState({});
@@ -147,7 +173,7 @@ const SigninForm = ({
     onSubmit: async (values) => {
       console.log(values);
       try {
-        await signInAuthWithEmailAndPassword(values);
+        const user = await signInAuthWithEmailAndPassword(values);
       } catch (e) {
         alert(e.code);
       }
