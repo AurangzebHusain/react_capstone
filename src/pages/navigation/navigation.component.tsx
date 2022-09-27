@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { Outlet, Link } from "react-router-dom";
 import "./navigation.styles.scss";
-import { ReactComponent as CrownLogo } from "../../assets/images/crown.svg";
+import crownLogo from "../../assets/images/crown.svg";
 import { UserContext } from "../../contexts/user.context";
 import { signOutUser } from "../../utils/firebase/firebase.utils";
 import CartIcon from "../../components/cart-icon/cart-icon.component";
@@ -18,7 +18,8 @@ const Navigation = () => {
     <>
       <div className="navigation-container">
         <Link to="/" className="logo">
-          <CrownLogo></CrownLogo>
+          <img src={crownLogo} alt="" />
+          {/* <CrownLogo></CrownLogo> */}
         </Link>
         <div className="nav-items">
           <Link to="/" className="nav-item">
@@ -46,7 +47,8 @@ const Navigation = () => {
       <Outlet />
       <div className="footer">
         <div className="logo">
-          <CrownLogo></CrownLogo>
+          <img src={crownLogo} alt="" />
+          {/* <CrownLogo></CrownLogo> */}
         </div>
         <div className="footer-items">
           <div className="footer-item">Item 1</div>
